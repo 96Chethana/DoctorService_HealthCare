@@ -27,6 +27,8 @@ public class DoctorRegistration {
 				
 				PreparedStatement preparedStmt = connection.prepareStatement(query); 
 				
+				 System.out.println("Hello");	
+				
 				//binding values    
 				preparedStmt.setInt(1, 0);      
 				preparedStmt.setString(2,f_name);    
@@ -41,12 +43,13 @@ public class DoctorRegistration {
 				// execute the statement    
 				preparedStmt.execute();    
 				
-				output = "Inserted successfully"; 
+				String newDoctor = readDoctorDetails();
+		        output = "{\"status\":\"success\", \"data\": \"" + newDoctor + "\"}";
 				
 			} catch (Exception e) {
 				// TODO: handle exception
-				output = "Error while inserting the Doctor Details.";   
-				System.err.println(e.getMessage()); 
+				output = "{\"status\":\"error\", \"data\": \"Error while inserting the doctor.\"}";
+		        System.err.println(e.getMessage()); 
 				
 			}
 			return output; 
@@ -94,7 +97,7 @@ public class DoctorRegistration {
 					   
 					   
 					// Add into the html table     
-					   output += "<tr><td>" + f_name + "</td>";     
+					   output += "<tr><td><input id='hiddocIDUpdate' name='hiddocIDUpdate' type='hidden' value='"+ id + "'>" + f_name + "</td>";    
 					   output += "<td>" + l_name + "</td>";     
 					   output += "<td>" + age + "</td>";     
 					   output += "<td>" + nic + "</td>"; 
@@ -104,10 +107,8 @@ public class DoctorRegistration {
 					   output += "<td>" + specialization + "</td>"; 
 					   
 					// buttons     
-					   output += "<td><input name=\"btnUpdate\" type=\"button\"value=\"Update\" class=\"btn btn-secondary\"></td>"      
-							+ "<td><form method=\"post\" action=\"items.jsp\">" 
-							+ "<input name=\"btnRemove\" type=\"submit\" value=\"Remove\"class=\"btn btn-danger\">"      
-					   		+"<input name=\"id\" type=\"hidden\" value=\"" + id + "\">" + "</form></td></tr>"; 				   
+					   output += "<td><input name= 'btnUpdate' type= 'button' value= 'Update' class='btnUpdate btn btn-secondary'></td>"
+					   								+ "<td><input name='btnRemove' type='button' value= 'Remove' class='btnRemove btn btn-danger' data-docid='" + id + "'>" + "</td></tr>";
 					   
 				   }
 				   
@@ -122,7 +123,7 @@ public class DoctorRegistration {
 			return output; 
 		}
 
-			
+		
 			//Create method for update Doctor Deatils
 			public String updateDoctorDetails(String id,String f_name, String l_name, String age,String email, String phoneNo, String nic, String hospital_name,String specialization)  
 			{   
@@ -148,12 +149,13 @@ public class DoctorRegistration {
 						// execute the statement    
 						preparedStmt.execute();    
 						
-						output = "Updated successfully"; 
+						 String newDoctor = readDoctorDetails();
+					       output = "{\"status\":\"success\", \"data\": \"" + newDoctor + "\"}";
 						
 				} catch (Exception e) {
 					// TODO: handle exception
 					
-					output = "Error while updating the Doctor Details.";    
+					output = "{\"status\":\"error\", \"data\":\"Error while updating the doctor.\"}";
 					System.err.println(e.getMessage()); 
 					
 				}
@@ -177,19 +179,17 @@ public class DoctorRegistration {
 						// execute the statement    
 						preparedStmt.execute();    
 						
-						output = "Deleted successfully"; 
+						String newDoctor = readDoctorDetails();
+					    output = "{\"status\":\"success\", \"data\": \"" + newDoctor + "\"}";
 						
 					
 				} catch (Exception e) {
 					// TODO: handle exception
-					output = "Error while deleting the Doctor Detials.";    
+					output = "{\"status\":\"error\", \"data\":\"Error while deleting  the doctor.\"}";
 					System.err.println(e.getMessage());   
 					
 				}
 				   return output; 		
 			}
-		
 
-	
-	
 }
