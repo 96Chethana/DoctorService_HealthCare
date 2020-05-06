@@ -1,158 +1,167 @@
-$(document).ready(function()
-		{
-	if ($("#alertSuccess").text().trim() == "")
-	{
-		$("#alertSuccess").hide();
-	}
-	$("#alertError").hide();
+//hide the divisions used to show the status messages on the page load.
+//$(document).ready(function() {
+	//if ($("#alertSuccess").text().trim() == "") {
+	//	$("#alertSuccess").hide();
+	//}
+//$("#alertError").hide();
+//});
 
+$(document).ready(function() 
+	{
+	 	$("#alertSuccess").hide();
+	
+		$("#alertError").hide();
+	
+		
 });
 
-$(document).on("click", "#btnSave", function(event)
-		{ 
+//LAB 09 
+
+//implementing the save button click handler
+$(document).on("click","#btnSave", function(event) {
+
+	// Clear alerts---------------------
+
 	$("#alertSuccess").text("");
 	$("#alertSuccess").hide();
 	$("#alertError").text("");
+	$("#alertError").hide();
 
-
-	var status = validateFeedbackForm();
-	if(status!= true)
-	{
+	// Form validation-------------------
+	var status = validateDoctorForm();
+	if (status != true) {
 		$("#alertError").text(status);
 		$("#alertError").show();
 		return;
 	}
 
-
-	var type  = ($("#hiFdSave").val() == "") ? "POST" : "PUT";
-	console.log(type)
+	// If valid------------------------
+	var type = ($("#hidDocIDSave").val() == "") ? "POST" : "PUT"; 
 	$.ajax(
-			{
-				url: "DoctorFeedbackAPI",
-				type: type,
-				data : $("#FeedbackFrom").serialize(),
-				dataType :"text",
-				complete : function(response, status)
-				{
-					onFeedbackSaveComplete(response.responseText, status);
-					console.log(response.responseText)
-					console.log("***************************************************************")
-					console.log(status)
-				}
-			});
-		});
-
-
-$(document).on("click", ".btnUpdate", function (event) {
-	$("#hiFdSave").val($(this).closest("tr").find('#hidFeedbackIdUpdate').val());
-	$("#f_name").val($(this).closest("tr").find('td:eq(0)').text()); 
-	$("#date").val($(this).closest("tr").find('td:eq(1)').text());
-	$("#message").val($(this).closest("tr").find('td:eq(2)').text());
+	{
+		
+		url : "DoctorFeedbackAPI",
+		type : type,
+		data : $("#formDoctor").serialize(),
+		dataType : "text",
+		complete : function(response, status)
+		{
+			onSaveDoctorComplete(response.responseText, status);
+		}
+		
+		
+	});
 
 });
 
 
-$(document).on("click", ".btnRemove", function (event) {
-	
-	$("#alertSuccess").text("");
-	$("#alertSuccess").hide();
-	$("#alertError").text("");
+//completing the saving function
+function onSaveDoctorComplete(response, status){  
+	if (status == "success") 
+	{ 
+			var resultSet = JSON.parse(response); 
 
-	$.ajax(
-			{
-				url : "DoctorFeedbackAPI",
-				type: "DELETE",
-				data : "feedback_id=" + $(this).data("feedback_id") ,
-				dataType :"text",
-				complete : function(response, status)
-				{
-					onFeedbackDeleteComplete(response.responseText, status);
-					console.log(response)
-					console.log("***************************************************************")
-					console.log(status)
+			if (resultSet.status.trim() == "success")  
+				{ 
+				$("#alertSuccess").text("Successfully saved."); 
+				$("#alertSuccess").show(); 
+
+				$("#divDoctorsGrid").html(resultSet.data); 
 				}
-			})
+			else if (resultSet.status.trim() == "error") 
+			{    $("#alertError").text(resultSet.data);   
+				$("#alertError").show(); 
+			} 
 
-})
-
-
-function onFeedbackSaveComplete(response, status)
-{
-	if (status == "success")
-	{
-		var resultSet = JSON.parse(response);
+	} else if (status == "error") 
+	{ 
 		
-		console.log("results "+resultSet.status.trim());
-		
-		if (resultSet.status.trim() == "success")
-		{
-			$("#alertSuccess").text("Successfully saved.");
-			$("#alertSuccess").show();
+			$("#alertError").text("Error while saving.");
+			$("#alertError").show(); 
+		} else 
+			{  
+				$("#alertError").text("Unknown error while saving..");
+				$("#alertError").show(); 
+			} 
 
-			$("#divFeedbackGrid").html(resultSet.data);
-		} else if (resultSet.status.trim() == "error")
-		{
-			$("#alertError").text(resultSet.data);
-			$("#alertError").show();
-		}
-	} else if (status == "error")
-	{
-		$("#alertError").text("Error while saving.");
-		$("#alertError").show();
-	} else
-	{
-		$("#alertError").text("Unknown error while saving..");
-		$("#alertError").show();
-	}
+$("#hidDocIDSave").val(""); 
+$("#formDoctor")[0].reset();
 
-	$("#hiFdSave").val("");
-	$("#FeedbackFrom")[0].reset();
 }
 
-function onFeedbackDeleteComplete(response, status)
-{
-	if (status == "success")
+
+
+
+
+
+// implementing the update button click handler
+$(document).on("click", ".btnUpdate", function(event)
 	{
+		$("#hidDocIDSave").val($(this).closest("tr").find('#hiddocIDUpdate').val());
+		$("#f_name").val($(this).closest("tr").find('td:eq(0)').text());
+		$("#date").val($(this).closest("tr").find('td:eq(1)').text());
+		$("#message").val($(this).closest("tr").find('td:eq(2)').text());
+
+	});
+
+
+
+//implementing the delete button click handler
+$(document).on("click", ".btnRemove", function(event) {
+	$.ajax({
+		url : "DoctorFeedbackAPI",
+		type : "DELETE",
+		data : "feedback_id=" + $(this).data("docid"),
+		dataType : "text",
+		complete : function(response, status) {
+			onDoctorDeleteComplete(response.responseText, status);
+		}
+	});
+});
+
+//completing the delete function
+function onDoctorDeleteComplete(response, status) {
+	if (status == "success") {
 		var resultSet = JSON.parse(response);
-		
-		if (resultSet.status.trim() == "success")
-		{
+		if (resultSet.status.trim() == "success") {
 			$("#alertSuccess").text("Successfully deleted.");
 			$("#alertSuccess").show();
-			$("#divFeedbackGrid").html(resultSet.data);
-		} else if (resultSet.status.trim() == "error")
-		{
+			$("#divDoctorsGrid").html(resultSet.data);
+		} else if (resultSet.status.trim() == "error") {
 			$("#alertError").text(resultSet.data);
 			$("#alertError").show();
 		}
-	} else if (status == "error")
-	{
+	} else if (status == "error") {
 		$("#alertError").text("Error while deleting.");
 		$("#alertError").show();
-	} else
-	{
+	} else {
 		$("#alertError").text("Unknown error while deleting..");
 		$("#alertError").show();
 	}
 }
 
-
-function validateFeedbackForm() {
+// validating the form
+function validateDoctorForm(){
 	
-	if($("#f_name").val().trim() == "")
-	{
-		return "Insert First Name";
-	}
 
-	if($("#date").val().trim() == "")
-	{
-		return "Insert Date";
+	// Doctor name
+	if ($("#f_name").val().trim() == "") {
+		return "Insert Doctor Name.";
 	}
-
-	if($("#message").val().trim() == "")
-	{
-		return "Insert message";
+	
+	//Date
+	if ($("#date").val().trim() == "") {
+		return "Insert Date.";
 	}
+	
+	
+	//message
+	if ($("#message").val().trim() == "") {
+		return "Insert Message.";
+	}	
 	
 	return true;
+	
+	
 }
+
