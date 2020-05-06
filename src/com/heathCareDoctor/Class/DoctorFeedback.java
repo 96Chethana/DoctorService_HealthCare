@@ -34,15 +34,13 @@ public class DoctorFeedback {
 				// execute the statement    
 				preparedStmt.execute();    
 				
-				String newFeedback = readDoctorFeedback();
-				output = "{\"status\":\"success\",\"data\": \"" + newFeedback + "\"}";
-				System.out.println("Insert success Output  ::" + output);
+				String newDoctorFeedback = readDoctorFeedback();
+		        output = "{\"status\":\"success\", \"data\": \"" + newDoctorFeedback + "\"}";
 				
 		} catch (Exception e) {
 			// TODO: handle exception
-			output = "{\"status\":\"error\",\"data\": \" Error while DoctorFeedbacks Details Inserting.\"}";
-			System.out.println("Insert Error Output  ::" + output);
-			System.err.println("Error while Insert the feedback Details:" + e.getMessage());
+			output = "{\"status\":\"error\", \"data\": \"Error while inserting the doctor.\"}";
+	        System.err.println(e.getMessage());
 			
 		}
 		return output; 
@@ -54,9 +52,7 @@ public class DoctorFeedback {
 	{
 		String output = ""; 
 		
-		try {
-			
-				String query = "select * from doctorfeedback";  
+		try {  
 		
 				// Prepare the html table to be displayed 
 				   output = "<table class=\"table table-striped\" border=\"1\">"
@@ -68,6 +64,7 @@ public class DoctorFeedback {
 				   		+ "<th>Remove</th>"
 				   		+ "</tr>"; 
 				
+				   String query = "select * from doctorfeedback";
 				   Statement stmt = connection.createStatement();    
 				   ResultSet rs = stmt.executeQuery(query); 
 				   
@@ -83,14 +80,13 @@ public class DoctorFeedback {
 					// Add into the html table 
 					   
 					   output += "<tr>";
-					   output += "<td><input id='hidFeedbackIdUpdate' name='hidFeedbackIdUpdate' type='hidden' value='"+feedback_id+"'>" +f_name + "</td>";  
+					   output += "<tr><td><input id='hiddocIDUpdate' name='hiddocIDUpdate' type='hidden' value='"+ feedback_id + "'>" + f_name + "</td>";
 					   output += "<td>" + date + "</td>";     
 					   output += "<td>" + message + "</td>";     
 						   
 						// buttons     
-						output += "<td><input name='btnUpdate' type='button' value='Update' class='btn btn-secondary'></td>";      				
-						output += "<td><input name='btnRemove' type='button' value='Remove' class='btn btn-danger' data-feedback_id='"+ feedback_id + "'>"+"</td>";
-						output += "</tr>"; 	
+						output += "<td><input name= 'btnUpdate' type= 'button' value= 'Update' class='btnUpdate btn btn-secondary'></td>" 
+									+ "<td><input name='btnRemove' type='button' value= 'Remove' class='btnRemove btn btn-danger' data-docid='" + feedback_id + "'>" + "</td></tr>";
 	   					   
 			   }
 			   
@@ -99,17 +95,15 @@ public class DoctorFeedback {
 			   
 		} catch (Exception e) {
 			// TODO: handle exception
-			output = "Error while reading the doctor feedback.";    
-			System.err.println(e.getMessage()); 
+			output = "Error while reading the values.";
+			System.err.println(e.getMessage());
 		}
 		return output; 
 	}
 
 	//
-	public String updateDoctorFeedback(String hiFdSave, String f_name, String date, String message)  
+	public String updateDoctorFeedback(String feedback_id, String f_name, String date, String message)  
 	{   
-		
-	System.out.println(hiFdSave+" :::: "+f_name+" :::: "+date+" :::: "+message );
 		String output = "";
 		
 		try {
@@ -123,20 +117,19 @@ public class DoctorFeedback {
 				preparedStmt.setString(1, f_name);    
 				preparedStmt.setString(2, date);    
 				preparedStmt.setString(3, message);    
-				preparedStmt.setInt(4, Integer.parseInt(hiFdSave));  
+				preparedStmt.setInt(4, Integer.parseInt(feedback_id));  
 				
 				// execute the statement    
 				preparedStmt.execute();    
 				
-				String newFeedback = readDoctorFeedback();
-				output = "{\"status\":\"success\",\"data\": \"" + newFeedback + "\"}";
-				System.out.println("Insert success Output  ::" + output);
+				String newDoctorFeedback = readDoctorFeedback();
+		        output = "{\"status\":\"success\", \"data\": \"" + newDoctorFeedback + "\"}";
 				
 		} catch (Exception e) {
 			// TODO: handle exception
 			
-			output = "{\"status\":\"error\",\"data\": \" Error while DoctorFeedback Details Updating.\"}";
-			System.err.println("Error while updating the feedback Details::  " + e.getMessage());
+			output = "{\"status\":\"error\", \"data\":\"Error while updating the doctor.\"}";
+			System.err.println(e.getMessage());
 			
 		}
 		   return output; 	
@@ -144,8 +137,6 @@ public class DoctorFeedback {
 	
 	
 	public String deleteDoctorFeedback(String feedback_id)  {   
-		
-		System.out.println("Pass feedback_id  " + feedback_id);
 		
 		String output = ""; 
 		
@@ -163,14 +154,14 @@ public class DoctorFeedback {
 				// execute the statement    
 				preparedStmt.execute();    			 
 
-				String newFeedback = readDoctorFeedback();
-				output = "{\"status\":\"success\",\"data\": \"" + newFeedback + "\"}";
+				String newDoctorFeedback = readDoctorFeedback();
+		        output = "{\"status\":\"success\", \"data\": \"" + newDoctorFeedback + "\"}";
 			
 			
 		} catch (Exception e) {
 			// TODO: handle exception
-			output = "{\"status\":\"error\",\"data\": \" Error while DoctorFeedbacks Details Deleting.\"}";
-			System.err.println("Error while Delete the feedback Details::" + e.getMessage());
+			output = "{\"status\":\"error\", \"data\":\"Error while deleting the doctor.\"}";
+			System.err.println(e.getMessage());
 			
 		}
 
