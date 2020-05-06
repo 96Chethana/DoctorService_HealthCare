@@ -18,6 +18,8 @@ import javax.servlet.http.HttpServletResponse;
 public class DoctorFeedbackAPI extends HttpServlet {
 	
 	private static final long serialVersionUID = 1L;
+	
+	DoctorFeedback doctorObj  = new DoctorFeedback();
        
     /**
      * @see HttpServlet#HttpServlet()
@@ -32,7 +34,7 @@ public class DoctorFeedbackAPI extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
+		//response.getWriter().append("Served at: ").append(request.getContextPath());
 	}
 
 	/**
@@ -40,19 +42,14 @@ public class DoctorFeedbackAPI extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		response.setContentType("application/json");
 		
-		String f_name      =   request.getParameter("f_name");        
-		String date	=	request.getParameter("date");
-		String message	=	request.getParameter("message");
+		String output = doctorObj.insertDoctorFeedback(request.getParameter("f_name"),
+				request.getParameter("date"),
+				request.getParameter("message"));
+
+
+		response.getWriter().write(output);
 		
-				DoctorFeedback doctorFeedback = new DoctorFeedback();
-				
-				String output = doctorFeedback.insertDoctorFeedback(f_name, date, message);
-				
-				response.getWriter().write(output);
-		
-				System.out.println("insert response :: "+ response);
 	}
 
 	/**
@@ -60,70 +57,54 @@ public class DoctorFeedbackAPI extends HttpServlet {
 	 */
 	protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		response.setContentType("application/json");
 		
 		Map paras = getParasMap(request);
-		DoctorFeedback doctorFeedback = new DoctorFeedback();
+		String output = doctorObj.updateDoctorFeedback(paras.get("hidDocIDSave").toString(),
+											   paras.get("f_name").toString().replace('+', ' '),
+											   paras.get("date").toString().replace('+', ' '),
+											   paras.get("message").toString().replace('+', ' '));
+		response.getWriter().write(output);		
 		
-		System.out.println(paras + "  :: paras PUT");
+}
 		
-		String output = doctorFeedback.updateDoctorFeedback(paras.get("hiFdSave").toString(),
-				paras.get("f_name").toString(),
-				paras.get("date").toString(),
-				paras.get("message").toString()
-				);
-		
-		response.getWriter().write(output);
-		
-		System.out.println("updtate response :: "+ response);
-	}
-
 	/**
 	 * @see HttpServlet#doDelete(HttpServletRequest, HttpServletResponse)
 	 */
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		
-		response.setContentType("application/json");
-		
 		Map paras = getParasMap(request);
-		
-		String feedback_id =paras.get("feedback_id").toString();
-		
-		DoctorFeedback doctorFeedback = new DoctorFeedback();
-		
-		String output = doctorFeedback.deleteDoctorFeedback(paras.get("feedback_id").toString());
-
-		System.out.println(output + "feedback_id");
+		String output = doctorObj.deleteDoctorFeedback(paras.get("feedback_id").toString());
 		
 		response.getWriter().write(output);
 		
-		System.out.println("Hi delete response :: "+ response);		
+	}
+	
+
+	// Convert request parameters to a Map
+	
+	private static Map getParasMap(HttpServletRequest request){
+		
+	Map<String, String> map = new HashMap<String, String>();
+	try
+	{
+			Scanner scanner = new Scanner(request.getInputStream(), "UTF-8");
+			String queryString = scanner.hasNext() ?
+								 scanner.useDelimiter("\\A").next() : "";
+	        scanner.close();
+	        
+	        String[] params = queryString.split("&");
+	        for (String param : params)
+	        {
+	        	String[] p = param.split("=");
+	        	map.put(p[0], p[1]);
+	        }
+	}
+	catch (Exception e)
+	{
+	}
+	return map;
 	}
 
-	private static Map getParasMap(HttpServletRequest request) {
-		
-        Map<String, String> map = new HashMap<String, String>();
-        try {
-        	
-	            Scanner scanner = new Scanner(request.getInputStream(), "UTF-8");
-	            String queryString = scanner.hasNext() ?
-	                    scanner.useDelimiter("\\A").next() : "";
-	            scanner.close();
-	            String[] params = queryString.split("&");
-	           
-	            for (String param : params) {
-	                String[] p = param.split("=");
-	                map.put(p[0], p[0]);
-            }
-            
-            System.out.println(map + "Map ***");
-            
-        } catch (IOException e) {
-        	
-            e.printStackTrace();
-        }
-        return map;
-        
-    }
+	
 }
