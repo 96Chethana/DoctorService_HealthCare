@@ -64,7 +64,7 @@ public class DoctorRegistration {
 			try {
 				
 				// Prepare the html table to be displayed 
-				   output = "<table border=\"1\">"
+				   output = "<table class=\"table table-striped\" border=\"1\">"
 				   		+ "<tr>"
 				   		+ "<th>First Name</th>"
 				   		+ "<th>Last Name</th>"
